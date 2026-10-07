@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ДУП.03 — Знакомство с системой персонального компьютера</title>
+<style>
+  :root {
+    --bg: #f2f4f6;
+    --surface: #ffffff;
+    --surface-2: #f7f9fb;
+    --ink: #22282f;
+    --muted: #5c6672;
+    --amber: #a35c1e;
+    --amber-soft: #b96f2b;
+    --line: #e1e6ec;
+    --ok: #1e7a4a;
+    --bad: #b03a3a;
+    --brand: linear-gradient(135deg, #7a4a19 0%, #a35c1e 55%, #c07a2e 100%);
+    --mark: #b96f2b;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 17px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased; }
+
+  .bg-anim { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+    background: radial-gradient(1100px 600px at 88% -8%, #faf6ef 0%, #f2f4f6 55%); }
+  .bg-anim i { position:absolute; border-radius:50%; filter:blur(70px); opacity:.35; display:block; }
+  .bg-anim i.d1 { width:360px; height:360px; background:#e9d9c2; top:-110px; left:-90px; animation:drift 24s infinite ease-in-out; }
+  .bg-anim i.d2 { width:300px; height:300px; background:#d6e0ea; bottom:-120px; right:-70px; animation:drift 28s infinite ease-in-out reverse; }
+  .bg-anim i.d3 { width:220px; height:220px; background:#f0e2cc; top:52%; left:68%; animation:drift 30s infinite ease-in-out; }
+  @keyframes drift {
+    0%,100% { transform: translate(0,0) scale(1); }
+    33% { transform: translate(40px,-30px) scale(1.05); }
+    66% { transform: translate(-34px,26px) scale(.96); }
+  }
+
+  main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 0 1.25rem 4rem; }
+
+  header.top { padding: 2.2rem 0 1.3rem; border-bottom: 1px solid var(--line); margin-bottom: .4rem; }
+  header.top .course { display:inline-block; font-weight:600; font-size:.78rem; letter-spacing:.06em;
+    text-transform:uppercase; color:#fff; background:var(--brand); padding:.28rem .7rem; border-radius:999px; margin-bottom:.75rem;}
+  header.top h1 { font-size: clamp(1.55rem, 3.4vw, 2.15rem); line-height:1.15; margin:0 0 .4rem; color:var(--ink); }
+  header.top .meta { color: var(--muted); font-size:.9rem; margin:0; }
+
+  .deck { position: relative; margin-top: 1.1rem; }
+  .slide { position:absolute; top:0; left:0; width:100%; max-width:1080px;
+    opacity:0; visibility:hidden; transform: translateY(16px);
+    transition: opacity .38s ease, transform .38s ease, visibility 0s linear .38s;
+    background:var(--surface); border:1px solid var(--line); border-radius:18px;
+    padding:2rem 2.2rem; box-shadow:0 10px 30px rgba(30,40,60,.07); }
+  .slide.active { position:relative; opacity:1; visibility:visible; transform:none;
+    transition: opacity .38s ease, transform .38s ease; }
+
+  .slide .kicker { font-size:.74rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--amber); margin:0 0 .35rem; display:block; }
+  .slide, .slide p, .slide li, .modal-body p, .modal-body li { text-align:justify; }
+  h2.st { font-size: clamp(1.3rem, 2.7vw, 1.65rem); line-height:1.25; margin:0 0 .6rem; color:var(--ink); }
+  .slide p.lead { color:var(--muted); margin:.2rem 0 .9rem; }
+
+  .slide.cover { background: var(--brand); border:none; overflow:hidden; }
+  .slide.cover::before, .slide.cover::after { content:""; position:absolute; border-radius:50%; filter:blur(46px); opacity:.35; z-index:0; }
+  .slide.cover::before { width:300px; height:300px; background:#f4c98a; top:-80px; right:-30px; }
+  .slide.cover::after { width:260px; height:260px; background:#efe3f0; bottom:-90px; left:-60px; }
+  .slide.cover > * { position:relative; z-index:1; }
+  .slide.cover .kicker { color:#fff; opacity:.9; }
+  .slide.cover h2.st { color:#fff; font-size: clamp(1.7rem, 4.2vw, 2.3rem); }
+  .slide.cover p.lead { color:rgba(255,255,255,.94); }
+  .tagrow { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.3rem; }
+  .cover .tagrow span { background:rgba(255,255,255,.2); border:1px solid rgba(255,255,255,.45);
+    padding:.28rem .7rem; border-radius:999px; font-size:.82rem; font-weight:600; }
+
+  .card { border:1px solid var(--line); border-radius:14px; background:var(--surface-2);
+    padding:1rem 1.15rem; margin:.55rem 0; }
+  .card .ttl { font-weight:600; color:var(--amber); margin:0 0 .4rem; font-size:1rem; }
+  .card p { margin:.28rem 0; }
+  .card .rec { font-weight:600; color:var(--ok); margin:0 0 .35rem; font-size:.95rem; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; }
+  .grid2 .card { margin:0; }
+
+  ul.clean { margin:.35rem 0 .35rem 0; padding:0; list-style:none; }
+  ul.clean li { margin:.34rem 0; padding-left:1.25rem; position:relative; }
+  ul.clean li::before { content:""; position:absolute; left:.15rem; top:.68em; width:9px; height:2px;
+    background:var(--amber); border-radius:2px; }
+  ol.steps { margin:.4rem 0; padding-left:1.3rem; counter-reset:st; list-style:none; }
+  ol.steps li { margin:.4rem 0; padding-left:2.1rem; position:relative; }
+  ol.steps li::before { counter-increment:st; content:counter(st); position:absolute; left:0; top:.05rem;
+    width:1.5rem; height:1.5rem; line-height:1.5rem; text-align:center; border-radius:50%;
+    background:var(--brand); color:#fff; font-weight:600; font-size:.8rem; }
+
+  .pill { display:inline-block; font-family:ui-monospace,monospace; font-weight:600; color:var(--amber);
+    background:#f6ede0; border:1px solid #ebd9bd; padding:.03rem .45rem; border-radius:6px; }
+  .formula { font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    background:#f4f1ea; border:1px solid var(--line); border-radius:10px;
+    padding:.8rem 1rem; margin:.55rem 0; font-size:.96rem; color:#333; white-space:pre; }
+  .formula b { color:var(--amber); }
+  table { border-collapse:collapse; width:100%; font-size:.9rem; margin:.55rem 0; }
+  th, td { padding:.6rem .7rem; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+  th { color:var(--muted); font-weight:600; }
+  td.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .scroll { overflow-x:auto; }
+  .note { font-size:.86rem; color:var(--muted); font-style:italic; margin:.45rem 0; }
+  .callout { border-left:4px solid var(--amber); background:var(--surface-2); border-radius:0 10px 10px 0;
+    padding:.85rem 1.05rem; margin:.7rem 0; }
+  .callout b { color:var(--amber); }
+
+  .imgph { border:2px dashed #cfd6dd; border-radius:12px; min-height:160px; display:flex;
+    align-items:center; justify-content:center; text-align:center; padding:1rem;
+    color:var(--muted); font-size:.9rem; background:var(--surface-2); }
+  .imgph b { color:var(--amber); display:block; margin-bottom:.25rem; font-size:1rem; }
+  .imgph code { font-family:ui-monospace,monospace; background:#f1e7d4; color:var(--amber);
+    padding:.05rem .4rem; border-radius:6px; }
+  figure { margin:.6rem 0; border:1px solid var(--line); border-radius:14px; background:var(--surface-2); padding:1rem; }
+  figcaption { color:var(--muted); font-size:.82rem; text-align:center; margin-top:.7rem; }
+  .imgfit { max-width:86%; height:auto; display:block; margin:0 auto; border-radius:10px; }
+
+  .src { border:1px solid var(--line); border-radius:12px; padding:.1rem 1.05rem .5rem; margin:.7rem 0; background:var(--surface-2);}
+  .src h3 { font-size:.86rem; margin:.75rem 0 .3rem; color:var(--amber); text-transform:uppercase; letter-spacing:.05em;}
+  a.clink { color:var(--amber); text-decoration:none; border-bottom:1px solid rgba(169,98,31,.4); }
+  a.clink:hover { color:var(--amber-soft); }
+  .src-btns { display:flex; flex-wrap:wrap; gap:.55rem; margin-top:.35rem; }
+  .botao { display:inline-flex; align-items:center; gap:.45rem; padding:.5rem .85rem; border-radius:10px;
+    border:1px solid var(--line); background:var(--surface); color:var(--ink); text-decoration:none; font-size:.86rem; font-weight:600;
+    transition: border-color .12s, background .12s, transform .12s; }
+  .botao::before { content:"↗"; color:var(--amber); font-weight:700; }
+  .botao:hover { border-color:var(--amber); background:#f6ede0; transform:translateY(-1px); }
+  .botao .bname { color:var(--amber); }
+  .botao .bdesc { color:var(--muted); font-weight:500; }
+
+  .pbar { height:6px; background:#e2e7ed; border-radius:99px; overflow:hidden; margin:1.1rem 0 .6rem; }
+  #pfill { height:100%; width:0%; background:var(--brand); border-radius:99px; transition:width .35s ease; }
+  .nav { display:flex; align-items:center; gap:.6rem; margin-top:.5rem; }
+  .nav button { cursor:pointer; border-radius:10px; font:inherit; font-weight:600;
+    padding:.6rem 1.1rem; background:var(--surface); border:1px solid var(--line); color:var(--ink);
+    transition: transform .1s, background .12s; }
+  .nav button:hover:not(:disabled) { background:var(--surface-2); }
+  .nav button:disabled { opacity:.45; cursor:not-allowed; }
+  .nav .primary { background:var(--brand); color:#fff; border:none; }
+  .dots { flex:1; display:flex; gap:4px; justify-content:center; min-width:0; overflow:hidden; }
+  .dot { width:5px; height:5px; flex:none; border-radius:50%; background:#c8d0da; border:none; padding:0;
+    cursor:pointer; transition: transform .12s, background .15s, width .12s; }
+  .dot:hover { background:var(--amber); }
+  .dot.active { background:var(--amber); transform:scale(1.3); width:9px; border-radius:99px; }
+  .counter { font-variant-numeric:tabular-nums; font-size:.85rem; color:var(--muted); font-weight:600; min-width:3.2rem; text-align:center; }
+
+  footer { color:var(--muted); font-size:.84rem; border-top:1px solid var(--line);
+    margin-top:2.4rem; padding-top:.9rem; }
+
+  .modal-overlay { position:fixed; inset:0; z-index:50; background:rgba(30,35,45,.5);
+    display:none; align-items:center; justify-content:center; padding:1.5rem; }
+  .modal-overlay.show { display:flex; }
+  .modal { background:var(--surface); border:1px solid var(--line); border-radius:16px;
+    max-width:860px; width:100%; max-height:88vh; display:flex; flex-direction:column;
+    box-shadow:0 30px 70px rgba(20,30,50,.25); }
+  .modal-head { display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    padding:1.05rem 1.4rem; border-bottom:1px solid var(--line); }
+  .modal-head h2 { margin:0; font-size:1.25rem; color:var(--ink); }
+  .modal-close { cursor:pointer; background:var(--surface-2); border:1px solid var(--line); color:var(--ink);
+    border-radius:8px; width:38px; height:38px; font-size:1.3rem; line-height:1; }
+  .modal-close:hover { background:#f3e3d2; color:var(--bad); }
+  .modal-body { overflow-y:auto; padding:1.2rem 1.5rem 1.6rem; }
+  .modal-body h3 { color:var(--amber); margin:1.1rem 0 .35rem; font-size:1.05rem; }
+  .modal-body p { margin:.45rem 0; color:#333a44; }
+  .modal-body li { margin:.3rem 0; color:#3c434d; }
+  .qz-intro { font-size:.95rem; color:var(--muted); margin:0 0 1rem; }
+
+  /* quiz in modal */
+  .qz { border:1px solid var(--line); border-radius:14px; padding:1.05rem 1.2rem; margin:1rem 0; background:var(--surface-2); }
+  .qz .ztype { display:inline-block; font-size:.74rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--amber); border:1px solid #ebd9bd; background:#f6ede0; border-radius:999px; padding:.12rem .6rem; margin-bottom:.5rem; }
+  .qz .zq { font-weight:600; margin:.2rem 0 .6rem; color:var(--ink); }
+  .qz .zopt { display:block; width:100%; text-align:left; cursor:pointer; border:1.5px solid var(--line);
+    background:var(--surface); border-radius:9px; padding:.6rem .85rem; margin:.42rem 0; font:inherit; color:var(--ink);
+    transition: border-color .12s, background .12s; }
+  .qz .zopt:hover:not(:disabled) { border-color:var(--amber-soft); }
+  .qz .zopt:disabled { cursor:default; }
+  .qz .zopt .l { font-weight:700; color:var(--muted); margin-right:.5rem; }
+  .qz .zopt.right { border-color:var(--ok); background:#e6f5ec; }
+  .qz .zopt.wrong { border-color:var(--bad); background:#f9e8e8; }
+  .qz .zexpl { display:none; margin:.6rem 0 0; padding:.7rem .9rem; border-radius:9px; font-size:.92rem; }
+  .qz .zexpl.show { display:block; }
+  .qz .zexpl.ok { background:#e6f5ec; border:1px solid #b6e0c4; }
+  .qz .zexpl.bad { background:#f9e8e8; border:1px solid #f0bfbf; }
+  .qz .zexpl .head { font-weight:800; margin-bottom:.2rem; }
+  .qz .zexpl.ok .head { color:var(--ok); }
+  .qz .zexpl.bad .head { color:var(--bad); }
+  .qz .znum { display:flex; gap:.55rem; align-items:center; flex-wrap:wrap; }
+  .qz .znum input { font:inherit; padding:.55rem .8rem; border:1.5px solid var(--line); border-radius:9px; background:var(--surface); color:var(--ink); width:160px; }
+  .qz .znum input:focus { outline:none; border-color:var(--amber); }
+  .qz .zbtn { cursor:pointer; background:var(--brand); color:#fff; border:none; font:inherit; font-weight:600;
+    padding:.55rem 1.1rem; border-radius:9px; }
+  .qz .zbtn:hover { filter:brightness(1.07); }
+  .qz .zscore { font-weight:700; color:var(--amber); margin-top:.1rem; }
+
+  /* open-modal button */
+  .btn-open { cursor:pointer; background:var(--brand); color:#fff; border:none; font:inherit; font-weight:600;
+    padding:.8rem 1.7rem; font-size:1.02rem; border-radius:11px; box-shadow:0 6px 18px rgba(147,87,33,.30);
+    transition: transform .12s, box-shadow .12s, filter .12s; }
+  .btn-open:hover { transform:translateY(-2px); filter:brightness(1.07); box-shadow:0 10px 24px rgba(147,87,33,.38); }
+
+  @media (max-width: 640px){
+    .grid2 { grid-template-columns:1fr; }
+    .slide { padding:1.3rem 1.1rem; }
+    .dots { display:none; }
+  }
+  @media print {
+    body { background:#fff; }
+    .bg-anim, .nav, .pbar { display:none; }
+    .slide { position:static !important; opacity:1 !important; visibility:visible !important;
+      transform:none !important; break-inside:avoid; background:#fff; color:#111; border:1px solid #ccc; margin:0 0 1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-anim"><i class="d1"></i><i class="d2"></i><i class="d3"></i></div>
+<main>
+  <header class="top">
+    <span class="course">ДУП.03 · Основы информационных технологий</span>
+    <h1>Знакомство с системой персонального компьютера</h1>
+    <p class="meta">Тема 3 учебного плана · 2 академических часа · очная форма обучения. Полный текст лекции — в модальном окне с последнего слайда. По каждой теме приведены рекомендации по выбору устройства и ссылки на российские источники.</p>
+  </header>
+
+  <div class="deck" id="deck">
+
+    <article class="slide cover active">
+      <p class="kicker">Тема · Устройство ПК</p>
+      <h2 class="st">Система персонального компьютера: состав, принцип работы и подбор комплектующих</h2>
+      <p class="lead">Рассматриваются основные компоненты персонального компьютера — материнская плата, центральный процессор, оперативная память, чипсет, накопители и системы BIOS/CMOS. Помимо устройства, поясняются рекомендации по выбору каждого компонента и приводятся три варианта готовых сборок для разных задач.</p>
+      <div class="tagrow">
+        <span>Материнская плата</span><span>Процессор</span><span>Оперативная память</span><span>Чипсет</span><span>BIOS · CMOS</span><span>Сборки ПК</span>
+      </div>
+    </article>
+
+    <article class="slide">
+      <p class="kicker">Общая схема</p>
+      <h2 class="st">Состав и взаимосвязь компонентов персонального компьютера</h2>
+      <p class="lead">Персональный компьютер — совокупность аппаратных средств, объединённых системной архитектурой. Устройство системы удобно изучать, прослеживая пути передачи данных между процессором, памятью и периферией.</p>
+      <div class="card"><p class="ttl">Основные блоки ПК</p>
+        <ul class="clean">
+          <li><b>Системный блок</b> — материнская плата, процессор, память, накопители и блок питания.</li>
+          <li><b>Устройства ввода</b> — клавиатура, мышь, сканер, микрофон.</li>
+          <li><b>Устройства вывода</b> — монитор, принтер, акустическая система.</li>
+          <li><b>Устройства хранения</b> — жёсткие диски (HDD) и твердотельные накопители (SSD).</li>
+        </ul>
+      </div>
+      <figure>
+        <img class="imgfit" src="img/pc-scheme.png" alt="Структурная схема персонального компьютера">
+        <figcaption>Структурная схема персонального компьютера</figcaption>
+      </figure>
+    </article>
+
+    <article class="slide">
+      <p class="kicker">Компонент 1</p>
+      <h2 class="st">Материнская плата</h2>
+      <p class="lead">Системная (материнская) плата — основная печатная плата компьютера, объединяющая все его компоненты.</p>
+      <div class="card"><p class="ttl">Назначение и роль в системе</p>
+        <p>Материнская плата является той основой, на которой строится вся вычислительная система: именно по её проводникам (дорожкам печатной платы и внутренним шинам) данные перемещаются между процессором, памятью и периферийными устройствами. Конструктивно плата выполнена из многослойного текстолита, поверх которого размещены разъёмы, микросхемы и цепи электропитания.</p>
+        <p>Принципиально важно, что плата задаёт не только физическое расположение компонентов, но и логику их взаимодействия: тип реализованных шин, число доступных слотов и портов, а также поколение поддерживаемых процессоров и памяти. Таким образом, выбор платы фактически определяет верхнюю границу возможностей всей будущей системы и одновременно ограничивает её совместимость.</p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <p class="ttl">Назначение</p>
+          <ul class="clean">
+            <li>Физическое размещение процессора и модулей памяти.</li>
+            <li>Подключение плат расширения и периферийных устройств.</li>
+            <li>Распределение электропитания и передача данных.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <p class="ttl">Ключевые элементы</p>
+          <ul class="clean">
+            <li>Сокет процессора, слоты для памяти (DIMM).</li>
+            <li>Чипсет и системные контроллеры.</li>
+            <li>Шины данных, разъёмы SATA/M.2, порты ввода-вывода.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card"><p class="rec">Рекомендации по выбору</p>
+        <ul class="clean">
+          <li>Сокет платы должен обязательно соответствовать сокету выбранного процессора.</li>
+          <li>Чипсет должен обеспечивать поддержку нужного типа памяти и нужного числа разъёмов.</li>
+          <li>Формат (ATX, micro-ATX, mini-ITX) подбирается под размер корпуса и планируемое число плат расширения.</li>
+          <li>Желательно предусмотреть запас слотов и портов для будущей модернизации.</li>
+        </ul>
+        <p>Важно понимать, что первым выбирается процессор, а уже под его сокет и требования — материнская плата. Следует обращать внимание на тип слота памяти (DDR4 или DDR5), количество слотов M.2 и SATA для накопителей, наличие современного слота видеокарты PCI Express, а также на количество портов USB и сетевого разъёма. Формат платы должен физически помещаться в выбранный корпус: для компактных корпусов применяются платы micro-ATX и mini-ITX, для просторных — полноразмерные ATX. Учёт этих параметров позволяет избежать несовместимости и обеспечивает возможность дальнейшей модернизации.</p>
+      </div>
+      <figure>
+        <img class="imgfit" src="img/motherboard.jpg" alt="Материнская плата с обозначением основных элементов">
+        <figcaption>Материнская плата</figcaption>
+      </figure>
+      <div class="src"><h3>Источники</h3>
+        <div class="src-btns">
+          <a class="botao" href="https://www.rbc.ru/life/news/67d2ae929a79476ef4687a27" target="_blank" rel="noopener"><span class="bname">РБК</span><span class="bdesc">— что такое материнская плата</span></a>
+          <a class="botao" href="https://www.ittelo.ru/news/chto-takoe-materinskaya-plata/" target="_blank" rel="noopener"><span class="bname">Ittelo</span><span class="bdesc">— материнская плата: устройство</span></a>
+          <a class="botao" href="https://club.dns-shop.ru/blog/t-102-materinskie-platyi/123071-materinskaya-plata-kak-ona-ustroena-i-kak-rabotaet/" target="_blank" rel="noopener"><span class="bname">Клуб DNS</span><span class="bdesc">— как устроена плата</span></a>
+        </div>
+      </div>
+    </article>
+
+    <article class="slide">
+      <p class="kicker">Компонент 2</p>
+      <h2 class="st">Центральный процессор</h2>
+      <p class="lead">Центральный процессор (CPU) — устройство, выполняющее арифметические, логические и управляющие операции.</p>
+      <div class="card"><p class="ttl">Принцип работы</p>
+        <p>Процессор является вычислительным ядром системы: он последовательно считывает из памяти машинные команды, декодирует их и выполняет арифметические и логические операции над данными. Каждый такт работы микросхемы соответствует одному элементарному действию, поэтому тактовая частота, измеряемая в гигагерцах, напрямую связана с быстродействием.</p>
+        <p>Современные процессоры содержат несколько вычислительных ядер, каждое из которых способно исполнять команды независимо от других, что позволяет параллельно обрабатывать несколько задач. Внутренняя кэш-память (L1, L2, L3) служит сверхбыстрым буфером для часто используемых данных, сокращая обращения к медленной оперативной памяти. В большинстве настольных систем применяются процессоры архитектуры x86-64 компаний Intel и AMD, устанавливаемые в специальный сокет материнской платы.</p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <p class="ttl">Основные характеристики</p>
+          <ul class="clean">
+            <li>Тактовая частота (в ГГц), разрядность.</li>
+            <li>Число ядер и потоков, объём кэш-памяти.</li>
+            <li>Техпроцесс изготовления и тепловыделение (TDP).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <p class="ttl">Роль в системе</p>
+          <p>Процессор исполняет машинные команды и координирует работу памяти и устройств ввода-вывода. В большинстве ПК применяются процессоры архитектуры x86-64 компаний Intel и AMD, устанавливаемые в сокет материнской платы.</p>
+        </div>
+      </div>
+      <div class="card"><p class="rec">Рекомендации по выбору</p>
+        <ul class="clean">
+          <li>Для офисных задач достаточно 2–4 ядер; для обработки видео и игр — от 6–8 ядер.</li>
+          <li>Тактовая частота важна в сочетании с числом ядер и размером кэша.</li>
+          <li>Тепловыделение (TDP) должно соответствовать возможностям системы охлаждения.</li>
+          <li>Дополнительно учитывается поддержка процессором нужного поколения памяти и шины PCI Express.</li>
+        </ul>
+        <p>Число ядер целесообразно подбирать в зависимости от решаемых задач: для работы с текстами, электронной почтой и браузером достаточно двух-четырёх ядер, тогда как для редактирования видео, графических программ и современных игр требуется от шести до восьми ядер и более. Количество потоков (вершин зависимости от технологии Hyper-Threading у Intel или SMT у AMD) отражает число параллельно исполняемых задач. Тепловыделение, обозначаемое параметром TDP, определяет необходимую мощность системы охлаждения: чем выше TDP, тем массивнее потребуется кулер. Процессор доустанавливают только в совместимый сокет и с учётом поддерживаемых поколений памяти — это следует заранее сверять со спецификацией материнской платы.</p>
+      </div>
+      <figure>
+        <img class="imgfit" src="img/cpu.jpg" alt="Центральный процессор, установленный в сокет материнской платы">
+        <figcaption>Центральный процессор</figcaption>
+      </figure>
+      <div class="src"><h3>Источники</h3>
+        <div class="src-btns">
+          <a class="botao" href="https://otus.ru/journal/ustrojstvo-centralnogo-processora/" target="_blank" rel="noopener"><span class="bname">OTUS</span><span class="bdesc">— устройство процессора</span></a>
+          <a class="botao" href="https://www.malwarebytes.com/ru/cybersecurity/computer/what-is-a-cpu" target="_blank" rel="noopener"><span class="bname">Malwarebytes</span><span class="bdesc">— что такое CPU</span></a>
+          <a class="botao" href="https://www.nic.ru/help/chto-takoe-processor-cpu_11148.html" target="_blank" rel="noopener"><span class="bname">Правила.ру (NIC)</span><span class="bdesc">— что такое процессор</span></a>
+        </div>
+      </div>
+    </article>
+
+    <article class="slide">
+      <p class="kicker">Компонент 3</p>
+      <h2 class="st">Оперативная память</h2>
+      <p class="lead">Оперативная память (RAM) — энергозависимое запоминающее устройство для хранения данных и программ, используемых процессором в текущий момент.</p>
+      <div class="card"><p class="ttl">Роль памяти в системе</p>
+        <p>Оперативная память служит рабочим пространством процессора: в неё загружаются исполняемые программы и обрабатываемые данные, доступ к которым осуществляется значительно быстрее, чем к накопителям. Отличие от постоянных накопителей состоит в энергозависимости — при отключении питания содержимое памяти стирается, поэтому результаты работы сохраняются на диск отдельно.</p>
+        <p>Современные модули памяти (DDR4, DDR5) устанавливаются в слоты DIMM и отличаются типом, объёмом и рабочей частотой. Эффективность памяти зависит не только от её объёма, но и от пропускной способности каналов: при установке двух одинаковых модулей в соответствующие слоты память работает в двухканальном режиме, что увеличивает скорость обмена данными с процессором.</p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <p class="ttl">Особенности</p>
+          <ul class="clean">
+            <li>Энергозависимость — данные теряются при отключении питания.</li>
+            <li>Высокое быстродействие и прямой доступ со стороны процессора.</li>
+            <li>Объём измеряется в гигабайтах (ГБ).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <p class="ttl">Типы модулей</p>
+          <p>В современных ПК применяются модули DDR4 и DDR5, устанавливаемые в слоты DIMM. Тип и частота памяти должны поддерживаться процессором и материнской платой.</p>
+        </div>
+      </div>
+      <figure>
+        <img class="imgfit" src="img/ram.jpg" alt="Модули оперативной памяти в слотах DIMM">
+        <figcaption>Модули оперативной памяти</figcaption>
+      </figure>
+      <div class="card"><p class="rec">Рекомендации по выбору</p>
+        <ul class="clean">
+          <li>Для офисных задач достаточно 8–16 ГБ; для игр и монтажа — от 16–32 ГБ.</li>
+          <li>Модули желательно устанавливать комплектом (два одинаковых) для работы в двухканальном режиме.</li>
+          <li>Тип и максимальная частота памяти должны соответствовать поддерживаемым платой и процессором.</li>
+        </ul>
+        <p>При подборе памяти учитывают три основных параметра: объём, тип и частоту. Объём определяется задачами: для офисной работы и интернета достаточно 8–16 ГБ, для игр и видеомонтажа целесообразно от 16 до 32 ГБ и более. Тип памяти (DDR4 или DDR5) должен совпадать с типом, поддерживаемым процессором и материнской платой, — иначе модуль не установится физически либо не будет работать. Частота памяти ограничивается как модулем, так и возможностями платы и процессора: при покупке следует выбирать частоту, не превышающую регламентированный максимум, иначе изделие автоматически снизит частоту до поддерживаемой. Для двухканального режима модули рекомендуется приобретать одним комплектом одинаковых планок.</p>
+      </div>
+      <div class="src"><h3>Источники</h3>
+        <div class="src-btns">
+          <a class="botao" href="https://hi-tech.mail.ru/news/157227-zachem-yadovitym-zmeyam-broskaya-okraska-otvet-uchenyh/" target="_blank" rel="noopener"><span class="bname">hi-tech Mail.ru</span><span class="bdesc">— оперативная память</span></a>
+          <a class="botao" href="https://www.mobilis.ru/news/operativnaya-pamyat-vidy-i-kharakteristiki/" target="_blank" rel="noopener"><span class="bname">Mobilis</span><span class="bdesc">— виды и характеристики</span></a>
+          <a class="botao" href="https://www.rbc.ru/life/news/6ac4d7f5431c1f281da96953" target="_blank" rel="noopener"><span class="bname">РБК</span><span class="bdesc">— оперативная память ПК</span></a>
+        </div>
+      </div>
+    </article>
+
+    <article class="slide">
+      <p class="kicker">Компонент 4</p>
+      <h2 class="st">Чипсет: северный и южный мост</h2>
+      <p class="lead">Чипсет — набор микросхем материнской платы, координирующих обмен данными между процессором, памятью и периферией.</p>
+      <div class="card"><p class="ttl">Назначение чипсета</p>
+        <p>Чипсет выполняет роль «диспетчера» шин и портов: именно он организует передачу данных между высокоскоростными компонентами (процессором и памятью) и многочисленными периферийными устройствами. В классической двухуровневой схеме функции разделены между двумя мостами: северным, работающим с быстрыми магистралями, и южным, обслуживающим относительно медленную периферию.</p>
+        <p>В современных платах функции северного моста — контроллер оперативной памяти и шина PCI Express — перенесены непосредственно в кристалл процессора, что сократило задержки и упростило конструкцию. Роль чипсета при этом сводится преимущественно к управлению периферией: количеством портов USB, разъёмов SATA и M.2, а также числом одновременно работающих устройств и плат расширения.</p>
+      </div>
+      <div class="callout"><b>Северный мост</b> — связывает процессор с оперативной памятью и видеосистемой по высокоскоростным шинам; работает на высоких тактовых частотах.</div>
+      <div class="callout"><b>Южный мост</b> — обслуживает относительно «медленную» периферию: накопители, порты USB, звук и сеть; соединяется с северным мостом внутренней шиной.</div>
+      <p class="note">В современных процессорах функции северного моста (контроллер памяти и шина PCI Express) во многом перенесены в кристалл процессора, что упростило конструкцию плат и повысило скорость обмена данными.</p>
+      <div class="card"><p class="rec">Рекомендации по выбору</p>
+        <ul class="clean">
+          <li>Чипсет выбирается исходя из потребностей: необходимое число портов USB и SATA, поддержка M.2 и нескольких видеокарт.</li>
+          <li>Для базовых офисных систем достаточно младших моделей чипсетов.</li>
+          <li>Для игровых и рабочих сборок целесообразны старшие модели с расширенным набором высокоскоростных шин.</li>
+        </ul>
+        <p>Выбор чипсета следует связывать с задачами: для офисного компьютера достаточно младшей модели, обеспечивающей стандартный набор портов и один-два разъёма M.2. Для игровой или рабочей системы целесообразно выбирать старший чипсет, поддерживающий большее число портов USB, несколько разъёмов M.2 и возможность установки нескольких видеокарт. При этом необходимо учитывать, что перечисленные возможности ограничиваются самой материнской платой, выбранной под этот чипсет, — поэтому итоговое решение определяется не только моделью чипсета, но и конкретной конфигурацией платы.</p>
+      </div>
+      <figure>
+        <img class="imgfit" src="img/chipset.jpg" alt="Схема чипсета: северный мост, южный мост и связи между устройствами">
+        <figcaption>Структура чипсета</figcaption>
+      </figure>
+    </article>
+
+    <article class="slide">
+      <p class="kicker">Компонент 5</p>
+      <h2 class="st">Контроллеры и устройства хранения данных</h2>
+      <p class="lead">Контроллеры управляют работой подключённых устройств и организуют обмен данными с шиной; накопители обеспечивают долговременное хранение информации.</p>
+      <div class="card"><p class="ttl">Принципы хранения данных</p>
+        <p>Для долговременного хранения информации применяются энергонезависимые накопители, сохраняющие данные при отключении питания. Традиционные жёсткие диски (HDD) представляют собой механические устройства: на вращающиеся магнитные пластины данные записываются магнитной головкой. Они характеризуются большой ёмкостью при относительно невысокой стоимости, однако уступают по скорости из-за механического доступа.</p>
+        <p>Твердотельные накопители (SSD) не содержат движущихся частей — они построены на флеш-памяти, что обеспечивает высокую скорость чтения и записи, меньшую задержку и повышенную надёжность. Наиболее быстрыми являются накопители, подключаемые по шине NVMe через разъём M.2. Контроллер накопителя управляет чтением, записью и проверкой целостности данных, организуя обмен с шиной компьютера.</p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <p class="ttl">Контроллеры</p>
+          <ul class="clean">
+            <li>Специализированные схемы для управления устройствами.</li>
+            <li>Контроллеры накопителей (SATA, NVMe) — высокоскоростной обмен.</li>
+            <li>Встроенные контроллеры USB, сети, звука.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <p class="ttl">Сравнение накопителей</p>
+          <ul class="clean">
+            <li><b>HDD</b> — магнитные диски; большая ёмкость, механический принцип записи.</li>
+            <li><b>SSD</b> — флеш-память; высокая скорость чтения и записи, повышенная надёжность.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card"><p class="rec">Рекомендации по выбору</p>
+        <ul class="clean">
+          <li>Для системы и программ целесообразно использовать SSD (лучше NVMe) — заметно ускоряет запуск и работу.</li>
+          <li>Для хранения больших объёмов файлов (архивы, медиатека) подойдёт HDD большей ёмкости.</li>
+          <li>Оптимальная конфигурация: SSD небольшой ёмкости под систему + HDD/дополнительный SSD для данных.</li>
+        </ul>
+        <p>Рациональным решением является комбинированная схема: на быстром SSD размещают операционную систему, программы и часто используемые данные, добиваясь короткого времени загрузки и отклика, тогда как жёсткий диск отводится под объёмные архивы, фильмы и резервные копии. Ёмкость накопителя выбирают с запасом для системы и будущих обновлений (рекомендуется от 256 ГБ на SSD под систему). При выборе SSD учитывают его подключение: накопители M.2/NVMe существенно быстрее моделей с интерфейсом SATA, однако требуют соответствующего разъёма на материнской плате.</p>
+      </div>
+      <figure>
+        <img class="imgfit" src="img/ssd-hdd.jpg" alt="Жёсткий диск HDD и твердотельный накопитель SSD">
+        <figcaption>Устройства хранения данных</figcaption>
+      </figure>
+      <div class="src"><h3>Источники</h3>
+        <div class="src-btns">
+          <a class="botao" href="https://www.ittelo.ru/news/vidy-zhestkikh-diskov/" target="_blank" rel="noopener"><span class="bname">Ittelo</span><span class="bdesc">— виды жёстких дисков</span></a>
+          <a class="botao" href="https://club.dns-shop.ru/blog/t-107-jestkie-diski/67611-jestkie-diski-po-naznacheniu-kakie-byivaut-i-dlya-chego-nujnyi/" target="_blank" rel="noopener"><span class="bname">Клуб DNS</span><span class="bdesc">— виды накопителей и назначение</span></a>
+        </div>
+      </div>
+    </article>
+
+    <article class="slide">
+      <p class="kicker">Служебные системы</p>
+      <h2 class="st">BIOS и CMOS</h2>
+      <p class="lead">BIOS и CMOS обеспечивают запуск компьютера и хранение его настроек.</p>
+      <div class="card"><p class="ttl">Роль BIOS в запуске системы</p>
+        <p>При включении питания компьютер не может сразу передать управление операционной системе: прежде необходимо проверить работоспособность аппаратных средств и инициализировать их. Эту функцию выполняет базовое микропрограммное обеспечение — BIOS (либо его современный преемник UEFI). Процедура самотестирования (POST) последовательно проверяет процессор, память, видеосистему и подключённые устройства; при обнаружении неисправности выводятся диагностические коды или звуковые сигналы.</p>
+        <p>После успешного тестирования BIOS определяет устройство загрузки (жёсткий диск, SSD или внешний носитель) и передаёт ему управление. Параметры загрузки, порядок устройств и настройки дата/время хранятся в энергозависимой памяти CMOS, питание которой при выключенном компьютере поддерживается небольшой батарейкой на материнской плате. Современный интерфейс UEFI дополнительно поддерживает графическое меню, защищённую загрузку и работу с дисками большого объёма.</p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <p class="ttl">BIOS</p>
+          <p>Базовая система ввода-вывода — микропрограммное обеспечение, выполняющее самотестирование (POST) при включении и передающее управление загрузчику операционной системы. В современных платах эти функции выполняет UEFI.</p>
+        </div>
+        <div class="card">
+          <p class="ttl">CMOS</p>
+          <p>Энергозависимая память малой ёмкости для хранения настроек BIOS и системного времени. Питание поддерживается батарейкой, расположенной на материнской плате.</p>
+        </div>
+      </div>
+      <div class="card"><p class="rec">Рекомендации при работе с BIOS</p>
+        <ul class="clean">
+          <li>Перед изменением настроек следует фиксировать исходные значения параметров.</li>
+          <li>Обновление (прошивку) BIOS/UEFI выполняют только при необходимости и по инструкции производителя платы.</li>
+          <li>При изучении темы полезно рассмотреть разделы настройки загрузки и контроля температуры (мониторинг).</li>
+        </ul>
+        <p>Поскольку настройки BIOS влияют на стабильность запуска, изменять их следует осознанно и по одному параметру, фиксируя исходные значения. Наиболее востребованные разделы — выбор устройства загрузки, активация режима XMP/EXPO для оперативной памяти и контроль температур и напряжения (мониторинг). Прошивку BIOS обновляют лишь при наличии конкретной необходимости (совместимость с новым оборудованием, исправление ошибок) и строго по инструкции производителя; неудачное обновление может вывести систему из строя.</p>
+      </div>
+      <figure>
+        <img class="imgfit" src="img/bios.jpg" alt="Экран настройки BIOS/UEFI при запуске компьютера">
+        <figcaption>Настройка BIOS/UEFI</figcaption>
+      </figure>
+    </article>
+
+    <article class="slide">
+      <p class="kicker">Компонент 6 · Мультимедиа</p>
+      <h2 class="st">Мультимедийное оборудование и устройства ввода-вывода</h2>
+      <p class="lead">Мультимедийные средства и устройства ввода-вывода обеспечивают взаимодействие пользователя с компьютером и обработку аудиовизуальной информации.</p>
+      <div class="card"><p class="ttl">Сущность мультимедиа</p>
+        <p>Понятие «мультимедиа» объединяет одновременное использование нескольких видов информации — текста, графики, звука, анимации и видео. Соответствующее оборудование обеспечивает их воспроизведение, ввод с внешних источников и вывод пользователю. К мультимедийным средствам относят аудио- и видеокарты, колонки, микрофоны, веб-камеры, а также мониторы и проекторы.</p>
+        <p>Устройства ввода-вывода образуют связь между компьютером и внешним миром. Устройства ввода (клавиатура, мышь, сканер, микрофон, камера) преобразуют действия человека в цифровые данные, которые обрабатывает процессор. Устройства вывода (монитор, принтер, акустическая система) переводят результат обработки в форму, воспринимаемую человеком.</p>
+      </div>
+      <div class="src"><h3>Источники</h3>
+        <div class="src-btns">
+          <a class="botao" href="https://viking.ru/info/multimediynoe-oborudovanie-chto-eto-takoe/" target="_blank" rel="noopener"><span class="bname">Viking</span><span class="bdesc">— мультимедийное оборудование</span></a>
+          <a class="botao" href="http://optic.cs.nstu.ru/files/Lit/Informatica/info/chapter102.html" target="_blank" rel="noopener"><span class="bname">НГТУ</span><span class="bdesc">— устройства ввода и вывода</span></a>
+        </div>
+      </div>
+    </article>
+
+    <article class="slide">
+      <p class="kicker">Расчёт</p>
+      <h2 class="st">Пропускная способность шины данных</h2>
+      <p class="lead">Пропускная способность шины определяется произведением её разрядности (ширины, в битах) на тактовую частоту (в герцах).</p>
+      <div class="card"><p class="ttl">Сущность понятия</p>
+        <p>Шина данных является набором параллельных проводников, по которым одновременно передаётся несколько бит информации. Разрядность шины показывает, сколько бит данных может быть передано за один такт: например, 64-разрядная шина передаёт за один такт сразу 64 бита, или 8 байт. Тактовая частота указывает, сколько таких элементарных передач выполняется за одну секунду. Произведение этих двух величин и даёт максимальный объём данных, который шина способна пропустить за единицу времени.</p>
+      </div>
+      <div class="formula">ПС = разрядность (бит) × частота (Гц)</div>
+      <div class="card">
+        <p class="ttl">Пример расчёта</p>
+        <div class="formula">Шина: разрядность 64 бита, частота 133 МГц
+
+64 бита = 8 байт
+ПС = 64 × 133 000 000 = 8 512 000 000 бит/с
+
+в байтах: 8 512 000 000 ÷ 8 = 1 064 000 000 байт/с
+ПС ≈ 1064 МБ/с ≈ 1,06 ГБ/с</div>
+        <p class="note">Это означает, что по шине между процессором и памятью может передаваться свыше 1 ГБ данных в секунду. В подсистемах памяти с передачей данных по обоим фронтам сигнала (например, DDR) эффективная пропускная способность дополнительно удваивается.</p>
+      </div>
+      <div class="callout"><b>Вывод:</b> увеличение разрядности и тактовой частоты шины повышает скорость обмена данными между узлами компьютера и, как следствие, общую производительность системы.</div>
+    </article>
+
+    <article class="slide">
+      <p class="kicker">Практика · сборки</p>
+      <h2 class="st">Примеры готовых сборок под разные задачи</h2>
+      <p class="lead">Подбор комплектующих определяется задачами пользователя и бюджетом. Ниже приведены три типовых варианта сборки и логика выбора каждой детали.</p>
+      <div class="scroll"><table>
+        <thead><tr><th>Компонент</th><th>Офисный ПК</th><th>Универсальный ПК</th><th>Игровой / рабочий ПК</th></tr></thead>
+        <tbody>
+          <tr><td><b>Процессор</b></td><td>2–4 ядра, низкий TDP (серия i3 / Ryzen 3)</td><td>6 ядер (i5 / Ryzen 5)</td><td>8 ядер и более (i7–i9 / Ryzen 7–9)</td></tr>
+          <tr><td><b>Память</b></td><td>8–16 ГБ DDR4</td><td>16 ГБ DDR4/DDR5</td><td>32 ГБ и более DDR5</td></tr>
+          <tr><td><b>Накопитель</b></td><td>SSD 256–512 ГБ</td><td>SSD 512 ГБ + HDD 1 ТБ</td><td>SSD NVMe 1 ТБ + HDD 2 ТБ</td></tr>
+          <tr><td><b>Видеокарта</b></td><td>Встроенная в процессор</td><td>Среднего класса / встроенная</td><td>Дискретная игрового класса</td></tr>
+          <tr><td><b>Материнская плата</b></td><td>micro-ATX, младший чипсет</td><td>ATX, средний чипсет</td><td>ATX, старший чипсет, запас портов</td></tr>
+          <tr><td><b>Блок питания</b></td><td>350–450 Вт</td><td>500–600 Вт</td><td>650–850 Вт</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">Конкретные модели подбираются по актуальным ценам и наличию; указанные параметры задают ориентиры при выборе. Решения следует проверять по официальным спецификациям производителей и обзорам.</p>
+    </article>
+
+    <article class="slide">
+      <p class="kicker">Практика · конструктор</p>
+      <h2 class="st">Сборка ПК в онлайн-конструкторе DNS</h2>
+      <p class="lead">Магазин электроники DNS предоставляет бесплатный онлайн-конструктор, позволяющий подбирать совместимые комплектующие и видеть итоговую стоимость сборки.</p>
+      <div class="card">
+        <p class="ttl">Как работает конструктор DNS</p>
+        <ol class="steps">
+          <li>Открыть раздел «Сборка ПК» на сайте магазина по адресу <a class="clink" href="https://www.dns-shop.ru/configurator/" target="_blank" rel="noopener">dns-shop.ru</a>.</li>
+          <li>Поочерёдно выбрать процессор, материнскую плату, память, накопитель, корпус, блок питания и при необходимости видеокарту.</li>
+          <li>Конструктор автоматически проверяет совместимость компонентов (сокет, тип памяти, мощность блока питания) и предупреждает о несовместимости.</li>
+          <li>По завершении сборки сохраняется её общая цена; итоговой сборке можно присвоить ссылку для передачи другому пользователю.</li>
+        </ol>
+      </div>
+      <div class="callout"><b>Преимущества:</b> проверка совместимости, актуальные цены, возможность сравнить варианты и получить готовую ссылку на собранный ПК.</div>
+      <div class="src"><h3>Источники</h3>
+        <div class="src-btns">
+          <a class="botao" href="https://www.dns-shop.ru/configurator/" target="_blank" rel="noopener"><span class="bname">DNS</span><span class="bdesc">— конструктор сборки ПК</span></a>
+          <a class="botao" href="https://www.dns-shop.ru/" target="_blank" rel="noopener"><span class="bname">DNS</span><span class="bdesc">— инструкция по конструктору</span></a>
+        </div>
+      </div>
+    </article>
+
+    <article class="slide">
+      <p class="kicker">Домашнее задание</p>
+      <h2 class="st">Самостоятельная работа по теме</h2>
+      <div class="card">
+        <p class="ttl">Задание</p>
+        <ol class="steps">
+          <li>Подобрать комплектующие и собрать компьютер в <b>онлайн-конструкторе DNS</b> (раздел «Сборка ПК» на сайте <a class="clink" href="https://www.dns-shop.ru/configurator/" target="_blank" rel="noopener">dns-shop.ru</a>) для одной из трёх задач: офисного, универсального или игрового ПК.</li>
+          <li>В задании прикрепить <b>ссылку на готовую сборку</b>, полученную в конструкторе.</li>
+          <li>В текстовом файле оформить <b>таблицу с комплектующими</b>: наименование, фото компонента и его технические характеристики.</li>
+          <li>Под каждой таблицей сделать <b>вывод</b> по выбору каждого комплектующего и указать <b>общую стоимость сборки</b>.</li>
+        </ol>
+      </div>
+      <p class="note">При выборе компонентов следует опираться на рекомендации, приведённые в лекции, и проверять совместимость деталей в конструкторе.</p>
+      <div class="src"><h3>Рекомендуемая учебная литература</h3>
+        <ul>
+          <li>Таненбаум Э., Остин Т. <span class="srcname">«Архитектура компьютера»</span> — систематическое изложение устройства вычислительных систем.</li>
+          <li>С. В. Симонович, <span class="srcname">«Информатика. Базовый курс»</span> (Питер) — разделы об архитектуре и устройстве ПК.</li>
+          <li>М. С. Цветкова, Л. С. Великович, <span class="srcname">«Информатика и ИКТ»</span> (Академия, СПО) — строение персонального компьютера.</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="slide">
+      <p class="kicker">Завершение</p>
+      <h2 class="st">Итоги лекции и полный текст</h2>
+      <p class="lead">На занятии рассмотрены основные компоненты персонального компьютера, назначение чипсета, методика расчёта пропускной способности шины и принципы подбора комплектующих под три типа сборок. Практическая работа выполняется в онлайн-конструкторе DNS. Полный конспект лекции доступен в модальном окне (кнопка ниже).</p>
+      <div class="grid2">
+        <div class="card">
+          <p class="ttl">Ключевые положения</p>
+          <ul class="clean">
+            <li>Материнская плата — связующее звено всей системы.</li>
+            <li>Процессор и память — ядро вычислительной системы.</li>
+            <li>Северный мост — быстрые шины; южный — периферия.</li>
+            <li>ПС шины = разрядность × частота.</li>
+            <li>Подбор комплектующих — через конструктор DNS.</li>
+          </ul>
+        </div>
+      </div>
+      <div style="margin-top:1.2rem; text-align:center;">
+        <button id="openModal" class="btn-open">Пройти тест для самопроверки</button>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="pbar"><div id="pfill"></div></div>
+  <div class="nav">
+    <button id="prev" disabled>← Назад</button>
+    <div class="dots" id="dots"></div>
+    <span class="counter" id="counter">1</span>
+    <button id="next" class="primary">Далее →</button>
+  </div>
+
+  <footer>
+    <b>ДУП.03 Основы информационных технологий</b> · Тема 3: Знакомство с системой персонального компьютера. Материалы для самостоятельной подготовки; рекомендуемые источники приведены на соответствующих слайдах. Все ссылки ведут на ресурсы, доступные из Российской Федерации. Сформировано 30.09.2026.
+  </footer>
+</main>
+
+<!-- ============ Modal ============ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <h2 id="modalTitle">Тест для самопроверки</h2>
+      <button class="modal-close" id="modalClose" aria-label="Закрыть">×</button>
+    </div>
+    <div class="modal-body">
+        <p class="qz-intro">Ниже приведены задания различных типов: выбор одного варианта, ответ «верно/неверно», выбор нескольких вариантов и числовой ответ. После выбора ответа сразу отображается пояснение.</p>
+
+        <div class="qz">
+          <span class="ztype">Выбор одного варианта</span>
+          <p class="zq">Вопрос 1. Какой компонент в классической архитектуре обеспечивает связь процессора с оперативной памятью?</p>
+          <button class="zopt" data-ok="false" onclick="qzSingle(this)"><span class="l">А.</span>Южный мост</button>
+          <button class="zopt" data-ok="true" onclick="qzSingle(this)"><span class="l">Б.</span>Северный мост</button>
+          <button class="zopt" data-ok="false" onclick="qzSingle(this)"><span class="l">В.</span>BIOS</button>
+          <button class="zopt" data-ok="false" onclick="qzSingle(this)"><span class="l">Г.</span>Контроллер USB</button>
+          <div class="zexpl"><p class="head">Пояснение</p><p>Северный мост связывает процессор с оперативной памятью и видеосистемой по высокоскоростным шинам; южный мост обслуживает периферию. В современных процессорах контроллер памяти встроен в кристалл процессора.</p></div>
+        </div>
+
+        <div class="qz">
+          <span class="ztype">Верно или неверно</span>
+          <p class="zq">Вопрос 2. CMOS — это энергозависимая память, хранящая настройки BIOS и системное время при выключенном компьютере.</p>
+          <button class="zopt" data-ok="true" onclick="qzSingle(this)"><span class="l">А.</span>Верно</button>
+          <button class="zopt" data-ok="false" onclick="qzSingle(this)"><span class="l">Б.</span>Неверно</button>
+          <div class="zexpl"><p class="head">Пояснение</p><p>Утверждение верно: CMOS хранит настройки BIOS и системное время, а её питание при выключении поддерживается батарейкой на материнской плате.</p></div>
+        </div>
+
+        <div class="qz">
+          <span class="ztype">Выбор нескольких вариантов</span>
+          <p class="zq">Вопрос 3. Какие из перечисленных устройств обеспечивают долговременное хранение данных?</p>
+          <button class="zopt" data-ok="true" onclick="qzMulti(this)"><span class="l">А.</span>Жёсткий диск (HDD)</button>
+          <button class="zopt" data-ok="false" onclick="qzMulti(this)"><span class="l">Б.</span>Оперативная память (RAM)</button>
+          <button class="zopt" data-ok="true" onclick="qzMulti(this)"><span class="l">В.</span>Твердотельный накопитель (SSD)</button>
+          <button class="zopt" data-ok="false" onclick="qzMulti(this)"><span class="l">Г.</span>Кэш-память процессора</button>
+          <div class="zexpl"><p class="head">Пояснение</p><p>Долговременное хранение обеспечивают энергонезависимые накопители — HDD и SSD. Оперативная память и кэш энергозависимы и теряют данные при отключении питания.</p></div>
+        </div>
+
+        <div class="qz">
+          <span class="ztype">Числовой ответ</span>
+          <p class="zq">Вопрос 4. Вычислите пропускную способность шины данных разрядностью 64 бита при тактовой частоте 133 МГц. Ответ укажите в МБ/с (целое число).</p>
+          <div class="znum">
+            <input type="text" id="qzNum" placeholder="МБ/с" autocomplete="off">
+            <button class="zbtn" onclick="qzNumAnswer()">Проверить</button>
+          </div>
+          <div class="zexpl"><p class="head">Пояснение</p><p>ПС = разрядность × частота = 64 × 133 000 000 = 8 512 000 000 бит/с. Делим на 8 (1 байт = 8 бит): 1 064 000 000 байт/с ≈ 1064 МБ/с.</p></div>
+        </div>
+
+        <div class="qz">
+          <span class="ztype">Выбор одного варианта</span>
+          <p class="zq">Вопрос 5. Какое устройство выполняет самотестирование аппаратных средств при включении компьютера и передаёт управление загрузчику операционной системы?</p>
+          <button class="zopt" data-ok="false" onclick="qzSingle(this)"><span class="l">А.</span>Центральный процессор</button>
+          <button class="zopt" data-ok="true" onclick="qzSingle(this)"><span class="l">Б.</span>BIOS (UEFI)</button>
+          <button class="zopt" data-ok="false" onclick="qzSingle(this)"><span class="l">В.</span>Контроллер SATA</button>
+          <button class="zopt" data-ok="false" onclick="qzSingle(this)"><span class="l">Г.</span>Операционная система</button>
+          <div class="zexpl"><p class="head">Пояснение</p><p>BIOS (в современных платах — UEFI) при включении выполняет самотестирование (POST), проверяя работоспособность компонентов, после чего передаёт управление загрузчику операционной системы.</p></div>
+        </div>
+
+        <p class="zscore" id="qzScore"></p>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.deck .slide'));
+  var cur = 0;
+  var prevBtn = document.getElementById('prev');
+  var nextBtn = document.getElementById('next');
+  var counter = document.getElementById('counter');
+  var dotsBox = document.getElementById('dots');
+
+  function render(){
+    slides.forEach(function(s, i){ s.classList.toggle('active', i === cur); });
+    prevBtn.disabled = (cur === 0);
+    nextBtn.disabled = (cur === slides.length - 1);
+    counter.textContent = (cur + 1) + ' / ' + slides.length;
+    document.getElementById('pfill').style.width = ((cur + 1) / slides.length * 100) + '%';
+    buildDots();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function buildDots(){
+    dotsBox.innerHTML = '';
+    for (var i = 0; i < slides.length; i++){
+      var d = document.createElement('button');
+      d.className = 'dot' + (i === cur ? ' active' : '');
+      d.title = 'Слайд ' + (i+1);
+      (function(idx){ d.addEventListener('click', function(){ go(idx); }); })(i);
+      dotsBox.appendChild(d);
+    }
+  }
+  function go(idx){
+    if (idx < 0 || idx >= slides.length) return;
+    cur = idx; render();
+  }
+  prevBtn.addEventListener('click', function(){ go(cur - 1); });
+  nextBtn.addEventListener('click', function(){ go(cur + 1); });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') go(cur + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') go(cur - 1);
+  });
+
+  var overlay = document.getElementById('modalOverlay');
+  document.getElementById('openModal').addEventListener('click', function(){ overlay.classList.add('show'); });
+  document.getElementById('modalClose').addEventListener('click', function(){ overlay.classList.remove('show'); });
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) overlay.classList.remove('show'); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') overlay.classList.remove('show'); });
+
+  /* ---------- Quiz ---------- */
+  var qzTotal = 5;
+  var qzDone = 0;
+  var qzScore = 0;
+  var qzMultiDone = {};
+
+  function qzFinish(){}
+
+  function qzSingle(btn){
+    var qz = btn.closest('.qz');
+    if (qz.classList.contains('done')) return;
+    qz.classList.add('done');
+    var ok = btn.getAttribute('data-ok') === 'true';
+    var opts = qz.querySelectorAll('.zopt');
+    opts.forEach(function(o){ o.disabled = true; });
+    opts.forEach(function(o){
+      if (o.getAttribute('data-ok') === 'true') o.classList.add('right');
+    });
+    var expl = qz.querySelector('.zexpl');
+    if (ok){
+      btn.classList.add('right');
+      expl.classList.add('ok');
+      expl.querySelector('.head').textContent = 'Верно. Ответ выбран правильно.';
+      qzScore++;
+    } else {
+      btn.classList.add('wrong');
+      expl.classList.add('bad');
+      expl.querySelector('.head').textContent = 'Неверно. Правильный ответ подсвечен.';
+    }
+    expl.classList.add('show');
+    qzDone++;
+    updateQzScore();
+  }
+
+  function qzMulti(btn){
+    var qz = btn.closest('.qz');
+    if (qz.classList.contains('done')) return;
+    var ok = btn.getAttribute('data-ok') === 'true';
+    btn.disabled = true;
+    btn.classList.add(ok ? 'right' : 'wrong');
+    var expl = qz.querySelector('.zexpl');
+    if (!ok){
+      qz.classList.add('done');
+      expl.classList.add('bad');
+      expl.querySelector('.head').textContent = 'Ошибка. Выбранный вариант неверен.';
+      expl.classList.add('show');
+      qzDone++;
+      updateQzScore();
+      return;
+    }
+    var corrects = qz.querySelectorAll('.zopt[data-ok="true"]');
+    var allOk = true;
+    corrects.forEach(function(o){ if (!o.classList.contains('right')) allOk = false; });
+    if (allOk){
+      qz.classList.add('done');
+      expl.classList.add('ok');
+      expl.querySelector('.head').textContent = 'Верно. Все правильные варианты выбраны.';
+      expl.classList.add('show');
+      qzScore++;
+      qzDone++;
+      updateQzScore();
+    }
+  }
+
+  function qzNumAnswer(){
+    var qz = document.getElementById('qzNum').closest('.qz');
+    if (qz.classList.contains('done')) return;
+    var val = parseFloat(document.getElementById('qzNum').value.replace(/\s/g,'').replace(',','.'));
+    if (isNaN(val)){ return; }
+    qz.classList.add('done');
+    var expl = qz.querySelector('.zexpl');
+    if (Math.abs(val - 1064) < 5){
+      expl.classList.add('ok');
+      expl.querySelector('.head').textContent = 'Верно. Расчёт выполнен правильно.';
+      qzScore++;
+    } else {
+      expl.classList.add('bad');
+      expl.querySelector('.head').textContent = 'Неверно. Ознакомьтесь с расчётом ниже.';
+    }
+    expl.classList.add('show');
+    qzDone++;
+    updateQzScore();
+  }
+
+  document.getElementById('qzNum').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') qzNumAnswer();
+  });
+
+  function updateQzScore(){
+    var el = document.getElementById('qzScore');
+    if (!el) return;
+    el.textContent = 'Результат самопроверки: ' + qzScore + ' из ' + qzTotal + '.';
+  }
+
+  render();
+</script>
+</body>
+</html>
